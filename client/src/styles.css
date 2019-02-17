@@ -1,0 +1,111 @@
+/*
+1. General
+2. Home Page
+*/
+
+
+/*
+===========================================
+1. General
+===========================================
+*/
+body {
+	min-height: 100vh;
+	overflow-x: hidden;
+}
+.app {
+	min-height: 100vh;
+}
+
+
+/*
+===========================================
+2. Home page
+===========================================
+*/
+.home-main-container {
+	min-height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: stretch;
+}
+.home-main-container .home-sign-up, .home-main-container .home-login {
+	flex: 1;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding: 10em 1em;
+}
+.home-main-container .home-sign-up {
+	background: #292929;
+	color: #c3073f;
+}
+.home-main-container .home-login {
+	color: #292929;
+	background: #c3073f;
+}
+.home-main-container .title {
+	margin: 0 0 20px;
+	text-align: center;
+	font-size: 3em;
+}
+.home-main-container .home-sign-up button.sign-up {
+	background: transparent;
+	padding: 8px 40px;
+	font-size: 1.25em;
+	margin: 0;
+	border: 2px solid;
+	border-radius: 5px;
+	transition: .3s;
+}
+.home-main-container .home-login button.sign-up:hover {
+	background: #c3073f;
+	color: #292929;
+}
+.home-main-container .home-login .form-container {
+	width: 100%;
+	max-width: 350px;
+	margin: 0;
+	position: relative;
+	display: flex;
+}
+.home-main-container .home-login .form-container label {
+	position: absolute;
+	left: 10px;
+	font-size: 1.2em;
+	top: 10px;
+	margin: 0;
+	font-weight: 400;
+	transition: .4s;
+}
+.home-main-container .home-login .form-container label.active {
+	top: -11px;
+	font-size: 1em;
+	font-weight: 500;
+	background: #c3073f;
+	left: 7px;
+	padding: 0 5px;
+	z-index: 2;
+}
+.home-main-container .home-login .form-container input {
+	width: 100%;
+	background: transparent;
+	border: 2px solid;
+	padding: 10px 10px;
+	font-size: 1.25em;
+	outline: 0;
+	border-radius: 4px 0 0 4px;
+	line-height: 21px;
+	position: relative;
+	z-index: 1;
+	border-right: 0;
+	flex: 1;
+}
+.home-main-container .home-login .form-container .login {
+	background: transparent;
+	border: 2px solid #292929;
+	border-radius: 0 4px 4px 0;
+	flex-basis: 45px;
+}
