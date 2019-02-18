@@ -41,7 +41,7 @@ export class Home extends React.Component {
             <div className="home-main-container">
                 <div className="home-sign-up">
                     <h1 className="title">What are you waiting for?</h1>
-                    <button type="button" className="sign-up">Join Now</button>
+                    <button type="button">Join Now</button>
                 </div>
                 <div className="home-login">
                     <h1 className="title">Sign Back In</h1>
