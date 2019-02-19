@@ -53,4 +53,14 @@ router.post('/api/addNewUser', function(req, res, next) {
     })
 });
 
+router.post('/api/login', function(req, res, next) {
+    Users.find({username: req.body.username, password: req.body.password}).then(result => {
+        if (result.length) {
+            res.status(200).send({error: false, message: 'ok'});
+        }else {
+            res.status(401).send({error: true, message: 'Invalid credentials'});
+        }
+    })
+})
+
 app.use('/', router);

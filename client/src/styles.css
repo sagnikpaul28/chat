@@ -77,6 +77,9 @@ a {
 	position: relative;
 	display: flex;
 }
+.home-main-container .home-login .form-container:nth-of-type(2) {
+	margin-top: 13px;
+}
 .home-main-container .home-login .form-container label {
 	position: absolute;
 	left: 10px;
@@ -90,7 +93,7 @@ a {
 	top: -11px;
 	font-size: 1em;
 	font-weight: 500;
-	background: #6f2232;
+	background: #c3073f;
 	left: 7px;
 	padding: 0 5px;
 	z-index: 2;
@@ -102,18 +105,22 @@ a {
 	padding: 10px 10px;
 	font-size: 1.25em;
 	outline: 0;
-	border-radius: 4px 0 0 4px;
+	border-radius: 4px;
 	line-height: 21px;
 	position: relative;
 	z-index: 1;
-	border-right: 0;
 	flex: 1;
+}
+.home-main-container .home-login .form-container:nth-of-type(2) input {
+	border-right: 0;
+	border-radius: 4px 0 0 4px;
 }
 .home-main-container .home-login .form-container .login {
 	background: transparent;
 	border: 2px solid #292929;
 	border-radius: 0 4px 4px 0;
 	flex-basis: 45px;
+	outline: 0 !important;
 }
 
 

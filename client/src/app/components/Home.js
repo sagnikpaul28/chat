@@ -7,7 +7,9 @@ export class Home extends React.Component {
 
         this.state = {
             username: '',
-            labelClass: ''
+            password: '',
+            usernameLabelClass: '',
+            passwordLabelClass: ''
         }
     }
 
@@ -15,25 +17,56 @@ export class Home extends React.Component {
 
     }
 
-    onChangeUsername(e) {
+    onChangeInput(e) {
+        let fieldName = e.target.name;
         this.setState({
-            username: e.target.value
+            [fieldName]: e.target.value
         });
     }
 
-    onFocusUsername() {
-        if (!this.state.labelClass.length) {
+    onFocusInput(e) {
+        let fieldName = e.target.name + "LabelClass";
+        if (!this.state[fieldName].length) {
             this.setState({
-                labelClass: 'active'
+                [fieldName]: 'active'
             })
         }
     }
 
-    onBlurUsername() {
-        if (!this.state.username.trim().length) {
+    onBlurInput(e) {
+        let labelName = e.target.name + "LabelClass";
+        let fieldName = e.target.name;
+        if (!this.state[fieldName].trim().length) {
             this.setState({
-                labelClass: ''
+                [labelName]: ''
             })
+        }
+    }
+
+    onLoginAttempt() {
+        if (!this.state.username.length) {
+            console.log('Username can not be empty');
+        }else if (!this.state.password.length) {
+            console.log('Password can not be empty');
+        }else {
+            fetch('http://localhost:4000/api/login', {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: this.state.username,
+                    password: this.state.passive
+                })
+            })
+                .then(res => res.json())
+                .then(res => {
+                    if (res.error) {
+                        console.log('Error', res.message);
+                    } else {
+                        console.log('Success', res.message);
+                    }
+                })
         }
     }
 
@@ -47,9 +80,13 @@ export class Home extends React.Component {
                 <div className="home-login">
                     <h1 className="title">Sign Back In</h1>
                     <div className="form-container">
-                        <label className={this.state.labelClass}>Enter your username</label>
-                        <input type="text" name="name" id="name" value={this.state.username} onChange={this.onChangeUsername.bind(this)} onFocus={this.onFocusUsername.bind(this)} onBlur={this.onBlurUsername.bind(this) }/>
-                        <button className="login">
+                        <label className={this.state.usernameLabelClass}>Enter your username</label>
+                        <input type="text" name="username" id="username" value={this.state.username} onChange={this.onChangeInput.bind(this)} onFocus={this.onFocusInput.bind(this)} onBlur={this.onBlurInput.bind(this) } />
+                    </div>
+                    <div className="form-container">
+                        <label className={this.state.passwordLabelClass}>Enter your password</label>
+                        <input type="password" name="password" id="password" value={this.state.password} onChange={this.onChangeInput.bind(this)} onFocus={this.onFocusInput.bind(this)} onBlur={this.onBlurInput.bind(this) }/>
+                        <button className="login" onClick={this.onLoginAttempt.bind(this)}>
                             <span className="glyphicon glyphicon-arrow-right"/>
                         </button>
                     </div>
