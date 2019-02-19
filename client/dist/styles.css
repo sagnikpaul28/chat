@@ -280,11 +280,11 @@ body {
 	padding: 10px;
 	display: flex;
 	flex-direction: column-reverse;
-	height: calc(100vh - 120px);
+	height: calc(100vh - 135px);
 	position: absolute;
 	width: 100%;
 	overflow: scroll;
-	bottom: 40px;
+	bottom: 60px;
 }
 .chat-dashboard .chat-container .chat-body .chat-text.received {
 	text-align: left;
@@ -296,6 +296,7 @@ body {
 	padding: 7px 15px;
 	border-radius: 5px 10px 10px 20px;
 	word-break: break-word;
+	margin: 3px 0;
 }
 .chat-dashboard .chat-container .chat-body .chat-text.sent {
 	text-align: right;
@@ -307,6 +308,7 @@ body {
 	border-radius: 10px 5px 20px 10px;
 	max-width: 90%;
 	word-break: break-word;
+	margin: 3px 0;
 }
 .chat-dashboard .chat-container .chat-message-type {
 	position: absolute;

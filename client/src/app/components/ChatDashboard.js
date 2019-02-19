@@ -1,8 +1,11 @@
 import React from "react";
+import io from 'socket.io-client';
 
 export class ChatDashboard extends React.Component {
     constructor(props) {
         super(props);
+
+        const socket = io('http://localhost:4000');
     }
 
     render() {

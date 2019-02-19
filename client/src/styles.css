@@ -17,6 +17,10 @@ body {
 .app {
 	min-height: 100vh;
 }
+a {
+	color: inherit;
+	text-decoration: none;
+}
 
 
 /*
@@ -52,7 +56,7 @@ body {
 	text-align: center;
 	font-size: 3em;
 }
-.home-main-container .home-sign-up button {
+.home-main-container .home-sign-up a {
 	background: transparent;
 	padding: 8px 40px;
 	font-size: 1.25em;
@@ -61,9 +65,10 @@ body {
 	border-radius: 5px;
 	transition: .3s;
 }
-.home-main-container .home-sign-up button:hover {
+.home-main-container .home-sign-up a:hover {
 	background: #c3073f;
 	color: #292929;
+	text-decoration: none;
 }
 .home-main-container .home-login .form-container {
 	width: 100%;
@@ -118,22 +123,30 @@ body {
 ===========================================
 */
 .sign-up {
-	background: #1a1a1d;
+	background: #c3073f;
 	min-height: 100vh;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 }
 .sign-up .sign-up-container {
-	background: #6f2232;
+	background: #1a1a1d;
 	border-radius: 5px;
 	padding: 15px 20px;
 	width: 100%;
 	max-width: 420px;
+	position: relative;
+}
+.sign-up .sign-up-container .error-message {
+	position: absolute;
+	top: -30px;
+	font-size: 1.25em;
+	color: #1a1a1d;
+	font-weight: 600;
 }
 .sign-up .sign-up-container .form-container {
 	margin: 15px 0;
-	color: #1a1a1d;
+	color: #c3073f;
 	text-align: center;
 	position: relative;
 }
@@ -150,7 +163,7 @@ body {
 	top: -11px;
 	font-size: 1em;
 	font-weight: 500;
-	background: #c3073f;
+	background: #1a1a1d;
 	left: 7px;
 	padding: 0 5px;
 	z-index: 2;
@@ -176,7 +189,7 @@ body {
 	font-size: 1.25em;
 	outline: 0;
 	border-radius: 4px;
-	color: #1a1a1d;
+	color: #c3073f;
 	margin: 0 0 15px;
 }
 
@@ -280,11 +293,11 @@ body {
 	padding: 10px;
 	display: flex;
 	flex-direction: column-reverse;
-	height: calc(100vh - 120px);
+	height: calc(100vh - 135px);
 	position: absolute;
 	width: 100%;
 	overflow: scroll;
-	bottom: 40px;
+	bottom: 60px;
 }
 .chat-dashboard .chat-container .chat-body .chat-text.received {
 	text-align: left;
@@ -296,6 +309,7 @@ body {
 	padding: 7px 15px;
 	border-radius: 5px 10px 10px 20px;
 	word-break: break-word;
+	margin: 3px 0;
 }
 .chat-dashboard .chat-container .chat-body .chat-text.sent {
 	text-align: right;
@@ -307,6 +321,7 @@ body {
 	border-radius: 10px 5px 20px 10px;
 	max-width: 90%;
 	word-break: break-word;
+	margin: 3px 0;
 }
 .chat-dashboard .chat-container .chat-message-type {
 	position: absolute;
