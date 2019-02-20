@@ -21,6 +21,15 @@ const userSchema = {
     password: {
         type: String,
         required: true
+    },
+    chatList: {
+        type: String,
+        required: false
+    },
+    status: {
+        type: String,
+        required: false,
+        default: "offline"
     }
 };
 

@@ -61,6 +61,14 @@ router.post('/api/login', function(req, res, next) {
             res.status(401).send({error: true, message: 'Invalid credentials'});
         }
     })
-})
+});
+
+router.get('/api/getAllUsers', function(req, res, next) {
+    Users.find({}).then( result => res.status(200).send(result) );
+});
+
+router.get('/api/getUserDetails', function(req, res, next) {
+    Users.find({username: req.query.username}).then(result => res.status(200).send(result) );
+});
 
 app.use('/', router);

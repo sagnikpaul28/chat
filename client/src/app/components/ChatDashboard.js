@@ -8,6 +8,10 @@ export class ChatDashboard extends React.Component {
         const socket = io('http://localhost:4000');
     }
 
+    componentDidMount() {
+
+    }
+
     render() {
         return (
             <div className="chat-dashboard">

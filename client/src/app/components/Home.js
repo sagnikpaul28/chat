@@ -56,7 +56,7 @@ export class Home extends React.Component {
                 },
                 body: JSON.stringify({
                     username: this.state.username,
-                    password: this.state.passive
+                    password: this.state.password
                 })
             })
                 .then(res => res.json())
@@ -64,10 +64,21 @@ export class Home extends React.Component {
                     if (res.error) {
                         console.log('Error', res.message);
                     } else {
-                        console.log('Success', res.message);
+                        this.fetchUserDetails();
                     }
                 })
         }
+    }
+
+    fetchUserDetails() {
+        fetch('http://localhost:4000/api/getUserDetails?username=' + this.state.username, {
+            type: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+            .then(res => res.json())
+            .then(res => console.log(res))
     }
 
     render() {
