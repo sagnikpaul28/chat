@@ -1,109 +1,68 @@
 import React from "react";
+import {setSignUpErrorMessage, signUpInputChange, signUpLabelChange} from "../actions/inputActions";
+import {connect} from "react-redux";
 
-export class SignUp extends React.Component {
+class SignUp extends React.Component {
     constructor(props) {
         super(props);
-
-        this.state = {
-            name: '',
-            username: '',
-            email: '',
-            number: '',
-            password: '',
-            confirmPassword: '',
-            nameLabel: '',
-            usernameLabel: '',
-            emailLabel: '',
-            numberLabel: '',
-            passwordLabel: '',
-            confirmPasswordLabel: '',
-            errorMessage: ''
-        };
-
         this.saveDetails = this.saveDetails.bind(this);
     }
 
     onChangeInput(e) {
-        let fieldName = e.target.name;
-        this.setState({
-            [fieldName]: e.target.value,
-        });
-        if (this.state.errorMessage.length) {
-            this.setState({
-                errorMessage: ''
-            })
+        this.props.inputChange(e.target.name, e.target.value);
+        if (this.props.inputs.signUpErrorMessage.length) {
+            this.props.setErrorMessage('');
         }
     }
 
     onInputFocus(e) {
         let fieldName = e.target.name;
-        let labelName = fieldName + 'Label';
-        this.setState({
-            [labelName]: 'active'
-        });
+        this.props.labelChange(fieldName, 'active');
     }
 
     onInputBlur(e) {
         let fieldName = e.target.name;
-        let labelName = fieldName + 'Label';
         if (e.target.value.trim().length === 0) {
-            this.setState({
-                [labelName]: ''
-            });
+            this.props.labelChange(fieldName, '');
         }
     }
 
     onFormSubmit() {
-        if (!this.state.username.length) {
-            this.setState({
-                errorMessage: '*Username can not be blank'
-            });
-        }else if (!this.state.name.length) {
-            this.setState({
-                errorMessage: '*Name can not be blank'
-            })
-        }else if (!this.state.email.length) {
-            this.setState({
-                errorMessage: '*Email can not be blank'
-            })
-        }else if (!this.state.number.length) {
-            this.setState({
-                errorMessage: '*Number can not be blank'
-            })
-        }else if (!this.state.password.length) {
-            this.setState({
-                errorMessage: '*Password can not be blank'
-            })
-        }else if (this.state.password !== this.state.confirmPassword) {
-            this.setState({
-                errorMessage: '*Passwords do not match'
-            });
+        if (!this.props.inputs.signUpUsername.length) {
+            this.props.setErrorMessage('*Username can not be blank');
+        }else if (!this.props.inputs.signUpName.length) {
+            this.props.setErrorMessage('*Name can not be blank');
+        }else if (!this.props.inputs.signUpEmail.length) {
+            this.props.setErrorMessage('*Email can not be blank');
+        }else if (!this.props.inputs.signUpNumber.length) {
+            this.props.setErrorMessage('*Number can not be blank');
+        }else if (!this.props.inputs.signUpPassword.length) {
+            this.props.setErrorMessage('*Password can not be blank');
+        }else if (this.props.inputs.signUpPassword !== this.props.inputs.signUpConfirmPassword) {
+            this.props.setErrorMessage('*Passwords do not match');
         }else {
             this.saveDetails();
         }
     }
 
     saveDetails() {
-        let self = this;
         fetch('http://localhost:4000/api/addNewUser', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                username: this.state.username,
-                name: this.state.name,
-                email: this.state.email,
-                number: this.state.number,
-                password: this.state.password
+                username: this.props.inputs.username,
+                name: this.props.inputs.name,
+                email: this.props.inputs.email,
+                number: this.props.inputs.number,
+                password: this.props.inputs.password
             })
         })
             .then(res => res.json())
             .then(res => {
                 if (res.error === true) {
-                    this.setState({
-                        errorMessage: res.message
-                    })
+                    this.props.setErrorMessage(res.message);
                 }else {
                     //Success
                 }
@@ -114,30 +73,30 @@ export class SignUp extends React.Component {
         return (
             <div className="sign-up">
                 <div className="sign-up-container">
-                    <div className="error-message">{this.state.errorMessage}</div>
+                    <div className="error-message">{this.props.inputs.signUpErrorMessage}</div>
                     <div className="form-container">
-                        <label className={this.state.usernameLabel}>Username</label>
-                        <input type="text" name="username" value={this.state.username} onChange={this.onChangeInput.bind(this)} onFocus={this.onInputFocus.bind(this)} onBlur={this.onInputBlur.bind(this)}/>
+                        <label className={this.props.inputs.signUpUsernameLabel}>Username</label>
+                        <input type="text" name="username" value={this.props.inputs.signUpUsername} onChange={this.onChangeInput.bind(this)} onFocus={this.onInputFocus.bind(this)} onBlur={this.onInputBlur.bind(this)}/>
                     </div>
                     <div className="form-container">
-                        <label className={this.state.nameLabel}>Name</label>
-                        <input type="text" name="name" value={this.state.name} onChange={this.onChangeInput.bind(this)} onFocus={this.onInputFocus.bind(this)} onBlur={this.onInputBlur.bind(this)}/>
+                        <label className={this.props.inputs.signUpNameLabel}>Name</label>
+                        <input type="text" name="name" value={this.props.inputs.signUpName} onChange={this.onChangeInput.bind(this)} onFocus={this.onInputFocus.bind(this)} onBlur={this.onInputBlur.bind(this)}/>
                     </div>
                     <div className="form-container">
-                        <label className={this.state.emailLabel}>Email</label>
-                        <input type="text" name="email" value={this.state.email} onChange={this.onChangeInput.bind(this)} onFocus={this.onInputFocus.bind(this)} onBlur={this.onInputBlur.bind(this)}/>
+                        <label className={this.props.inputs.signUpEmailLabel}>Email</label>
+                        <input type="text" name="email" value={this.props.inputs.signUpEmail} onChange={this.onChangeInput.bind(this)} onFocus={this.onInputFocus.bind(this)} onBlur={this.onInputBlur.bind(this)}/>
                     </div>
                     <div className="form-container">
-                        <label className={this.state.numberLabel}>Mobile Number</label>
-                        <input type="text" name="number" value={this.state.number} onChange={this.onChangeInput.bind(this)} onFocus={this.onInputFocus.bind(this)} onBlur={this.onInputBlur.bind(this)}/>
+                        <label className={this.props.inputs.signUpNumberLabel}>Mobile Number</label>
+                        <input type="text" name="number" value={this.props.inputs.signUpNumber} onChange={this.onChangeInput.bind(this)} onFocus={this.onInputFocus.bind(this)} onBlur={this.onInputBlur.bind(this)}/>
                     </div>
                     <div className="form-container">
-                        <label className={this.state.passwordLabel}>Password</label>
-                        <input type="password" name="password" value={this.state.password} onChange={this.onChangeInput.bind(this)} onFocus={this.onInputFocus.bind(this)} onBlur={this.onInputBlur.bind(this)}/>
+                        <label className={this.props.inputs.signUpPasswordLabel}>Password</label>
+                        <input type="password" name="password" value={this.props.inputs.signUpPassword} onChange={this.onChangeInput.bind(this)} onFocus={this.onInputFocus.bind(this)} onBlur={this.onInputBlur.bind(this)}/>
                     </div>
                     <div className="form-container">
-                        <label className={this.state.confirmPasswordLabel}>Confirm Password</label>
-                        <input type="password" name="confirmPassword" value={this.state.confirmPassword} onChange={this.onChangeInput.bind(this)} onFocus={this.onInputFocus.bind(this)} onBlur={this.onInputBlur.bind(this)}/>
+                        <label className={this.props.inputs.signUpConfirmPasswordLabel}>Confirm Password</label>
+                        <input type="password" name="confirmPassword" value={this.props.inputs.signUpConfirmPassword} onChange={this.onChangeInput.bind(this)} onFocus={this.onInputFocus.bind(this)} onBlur={this.onInputBlur.bind(this)}/>
                     </div>
                     <button type="button" onClick={this.onFormSubmit.bind(this)}>Join</button>
                 </div>
@@ -145,3 +104,31 @@ export class SignUp extends React.Component {
         )
     }
 }
+
+const mapStateToProps = (state) => {
+    return {
+        inputs: state.inputReducers
+    }
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        inputChange: (fieldName, value) => {
+            dispatch(
+                signUpInputChange(fieldName, value)
+            )
+        },
+        labelChange: (fieldName, value) => {
+            dispatch(
+                signUpLabelChange(fieldName, value)
+            )
+        },
+        setErrorMessage: (message) => {
+            dispatch(
+                setSignUpErrorMessage(message)
+            )
+        }
+    }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignUp);

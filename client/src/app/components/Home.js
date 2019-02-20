@@ -1,16 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import {connect} from "react-redux";
+import {homeLoginInputChange, homeLoginLabelChange} from "../actions/inputActions";
+import {saveUserData} from "../actions/userDataActions";
 
-export class Home extends React.Component {
+class Home extends React.Component {
     constructor(props) {
         super(props);
-
-        this.state = {
-            username: '',
-            password: '',
-            usernameLabelClass: '',
-            passwordLabelClass: ''
-        }
     }
 
     componentDidMount() {
@@ -18,35 +14,26 @@ export class Home extends React.Component {
     }
 
     onChangeInput(e) {
-        let fieldName = e.target.name;
-        this.setState({
-            [fieldName]: e.target.value
-        });
+        this.props.changeInputFields(e.target.name, e.target.value)
     }
 
     onFocusInput(e) {
-        let fieldName = e.target.name + "LabelClass";
-        if (!this.state[fieldName].length) {
-            this.setState({
-                [fieldName]: 'active'
-            })
-        }
+        let labelName = 'home' + e.target.name.charAt(0).toUpperCase() + e.target.name.substring(1) + "LabelClass";
+        this.props.changeInputLabels(labelName, 'active');
     }
 
     onBlurInput(e) {
-        let labelName = e.target.name + "LabelClass";
-        let fieldName = e.target.name;
-        if (!this.state[fieldName].trim().length) {
-            this.setState({
-                [labelName]: ''
-            })
+        let fieldName = 'home' + e.target.name.charAt(0).toUpperCase() + e.target.name.substring(1);
+        let labelName = fieldName + "LabelClass";
+        if (!this.props.homeInputs[fieldName].trim().length) {
+            this.props.changeInputLabels(labelName, '');
         }
     }
 
     onLoginAttempt() {
-        if (!this.state.username.length) {
+        if (!this.props.homeInputs.homeUsername.length) {
             console.log('Username can not be empty');
-        }else if (!this.state.password.length) {
+        }else if (!this.props.homeInputs.homePassword.length) {
             console.log('Password can not be empty');
         }else {
             fetch('http://localhost:4000/api/login', {
@@ -55,8 +42,8 @@ export class Home extends React.Component {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    username: this.state.username,
-                    password: this.state.password
+                    username: this.props.homeInputs.homeUsername,
+                    password: this.props.homeInputs.homePassword
                 })
             })
                 .then(res => res.json())
@@ -71,38 +58,79 @@ export class Home extends React.Component {
     }
 
     fetchUserDetails() {
-        fetch('http://localhost:4000/api/getUserDetails?username=' + this.state.username, {
+        fetch('http://localhost:4000/api/getUserDetails?username=' + this.props.homeInputs.homeUsername, {
             type: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             }
         })
             .then(res => res.json())
-            .then(res => console.log(res))
+            .then(res => {
+                this.props.saveUserData(res[0]);
+                localStorage.setItem('userData', JSON.stringify(res[0]));
+            })
     }
 
     render() {
-        return (
-            <div className="home-main-container">
-                <div className="home-sign-up">
-                    <h1 className="title">What are you waiting for?</h1>
-                    <Link to="/sign-up">Join Now</Link>
-                </div>
-                <div className="home-login">
-                    <h1 className="title">Sign Back In</h1>
-                    <div className="form-container">
-                        <label className={this.state.usernameLabelClass}>Enter your username</label>
-                        <input type="text" name="username" id="username" value={this.state.username} onChange={this.onChangeInput.bind(this)} onFocus={this.onFocusInput.bind(this)} onBlur={this.onBlurInput.bind(this) } />
+        if (localStorage.getItem('userData')) {
+            this.props.saveUserData(JSON.parse(localStorage.getItem('userData')));
+            window.location.href = '/chat';
+        } else {
+            return (
+                <div className="home-main-container">
+                    <div className="home-sign-up">
+                        <h1 className="title">What are you waiting for?</h1>
+                        <Link to="/sign-up">Join Now</Link>
                     </div>
-                    <div className="form-container">
-                        <label className={this.state.passwordLabelClass}>Enter your password</label>
-                        <input type="password" name="password" id="password" value={this.state.password} onChange={this.onChangeInput.bind(this)} onFocus={this.onFocusInput.bind(this)} onBlur={this.onBlurInput.bind(this) }/>
-                        <button className="login" onClick={this.onLoginAttempt.bind(this)}>
-                            <span className="glyphicon glyphicon-arrow-right"/>
-                        </button>
+                    <div className="home-login">
+                        <h1 className="title">Sign Back In</h1>
+                        <div className="form-container">
+                            <label className={this.props.homeInputs.homeUsernameLabelClass}>Enter your username</label>
+                            <input type="text" name="username" id="username" value={this.props.homeInputs.homeUsername}
+                                   onChange={this.onChangeInput.bind(this)} onFocus={this.onFocusInput.bind(this)}
+                                   onBlur={this.onBlurInput.bind(this)}/>
+                        </div>
+                        <div className="form-container">
+                            <label className={this.props.homeInputs.homePasswordLabelClass}>Enter your password</label>
+                            <input type="password" name="password" id="password"
+                                   value={this.props.homeInputs.homePassword} onChange={this.onChangeInput.bind(this)}
+                                   onFocus={this.onFocusInput.bind(this)} onBlur={this.onBlurInput.bind(this)}/>
+                            <button className="login" onClick={this.onLoginAttempt.bind(this)}>
+                                <span className="glyphicon glyphicon-arrow-right"/>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        )
+            )
+        }
     }
 }
+
+const mapStateToProps = (state) => {
+    return {
+        homeInputs: state.inputReducers,
+        homeUserData: state.userDataReducer
+    }
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        changeInputFields: (fieldName, value) => {
+            dispatch(
+                homeLoginInputChange(fieldName, value)
+            )
+        },
+        changeInputLabels: (labelName, status) => {
+            dispatch(
+                homeLoginLabelChange(labelName, status)
+            )
+        },
+        saveUserData: (data) => {
+            dispatch(
+                saveUserData(data)
+            )
+        }
+    }
+};
+
+export default connect (mapStateToProps, mapDispatchToProps)(Home);
