@@ -4,9 +4,10 @@ import thunk from "redux-thunk";
 
 import inputReducers from './reducers/inputReducer'
 import userDataReducer from "./reducers/userDataReducer";
+import dashboardReducers from "./reducers/dashboardReducer";
 
 const store = createStore(
-    combineReducers({ inputReducers, userDataReducer }),
+    combineReducers({ inputReducers, userDataReducer, dashboardReducers }),
     {},
     applyMiddleware(logger, thunk)
 );

@@ -71,4 +71,53 @@ router.get('/api/getUserDetails', function(req, res, next) {
     Users.find({username: req.query.username}).then(result => res.status(200).send(result) );
 });
 
+router.post('/api/getChatListUserDetails', function(req, res, next) {
+    let chatList = req.body.chatList;
+    chatList = chatList.split(',');
+    let chatListLength = chatList.length;
+    let userDataList = [];
+    for (let i = 0; i < chatList.length; i++) {
+        Users.find({username: chatList[i]}).then(result => {
+            userDataList.push({
+                name: result[0].name,
+                userImage: result[0].userImage,
+                username: result[0].username
+            });
+            if (chatListLength === userDataList.length) {
+                res.send(userDataList);
+            }
+        });
+    }
+});
+
+router.post('/api/getContactsExceptChatListDetails', function(req, res, next) {
+    let chatList = req.body.chatList;
+    chatList = chatList.split(',');
+    let chatListLength = chatList.length;
+    let userDataList = [];
+    Users.find({}).then(result => {
+        result.map(item => {
+            if (result.length === (userDataList.length + chatList.length)) {
+                return;
+            }
+            let count = 0;
+            chatList.map(chatItem => {
+                if (chatItem === item.username) {
+                    count++;
+                }
+            });
+            if (count === 0) {
+                userDataList.push({
+                    name: item.name,
+                    userImage: item.userImage,
+                    username: item.username
+                });
+            }
+            if (result.length === (userDataList.length + chatList.length)) {
+                res.send(userDataList);
+            }
+        })
+    });
+});
+
 app.use('/', router);

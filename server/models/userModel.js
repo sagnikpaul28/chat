@@ -30,6 +30,11 @@ const userSchema = {
         type: String,
         required: false,
         default: "offline"
+    },
+    userImage: {
+        type: String,
+        required: false,
+        default: 'http://localhost:8080/assets/batman.png'
     }
 };
 

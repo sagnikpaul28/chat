@@ -17,6 +17,10 @@ body {
 .app {
 	min-height: 100vh;
 }
+a {
+	color: inherit;
+	text-decoration: none;
+}
 
 
 /*
@@ -52,7 +56,7 @@ body {
 	text-align: center;
 	font-size: 3em;
 }
-.home-main-container .home-sign-up button {
+.home-main-container .home-sign-up a {
 	background: transparent;
 	padding: 8px 40px;
 	font-size: 1.25em;
@@ -61,9 +65,10 @@ body {
 	border-radius: 5px;
 	transition: .3s;
 }
-.home-main-container .home-sign-up button:hover {
+.home-main-container .home-sign-up a:hover {
 	background: #c3073f;
 	color: #292929;
+	text-decoration: none;
 }
 .home-main-container .home-login .form-container {
 	width: 100%;
@@ -71,6 +76,9 @@ body {
 	margin: 0;
 	position: relative;
 	display: flex;
+}
+.home-main-container .home-login .form-container:nth-of-type(2) {
+	margin-top: 13px;
 }
 .home-main-container .home-login .form-container label {
 	position: absolute;
@@ -85,7 +93,7 @@ body {
 	top: -11px;
 	font-size: 1em;
 	font-weight: 500;
-	background: #6f2232;
+	background: #c3073f;
 	left: 7px;
 	padding: 0 5px;
 	z-index: 2;
@@ -97,18 +105,22 @@ body {
 	padding: 10px 10px;
 	font-size: 1.25em;
 	outline: 0;
-	border-radius: 4px 0 0 4px;
+	border-radius: 4px;
 	line-height: 21px;
 	position: relative;
 	z-index: 1;
-	border-right: 0;
 	flex: 1;
+}
+.home-main-container .home-login .form-container:nth-of-type(2) input {
+	border-right: 0;
+	border-radius: 4px 0 0 4px;
 }
 .home-main-container .home-login .form-container .login {
 	background: transparent;
 	border: 2px solid #292929;
 	border-radius: 0 4px 4px 0;
 	flex-basis: 45px;
+	outline: 0 !important;
 }
 
 
@@ -118,22 +130,30 @@ body {
 ===========================================
 */
 .sign-up {
-	background: #1a1a1d;
+	background: #c3073f;
 	min-height: 100vh;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 }
 .sign-up .sign-up-container {
-	background: #6f2232;
+	background: #1a1a1d;
 	border-radius: 5px;
 	padding: 15px 20px;
 	width: 100%;
 	max-width: 420px;
+	position: relative;
+}
+.sign-up .sign-up-container .error-message {
+	position: absolute;
+	top: -30px;
+	font-size: 1.25em;
+	color: #1a1a1d;
+	font-weight: 600;
 }
 .sign-up .sign-up-container .form-container {
 	margin: 15px 0;
-	color: #1a1a1d;
+	color: #c3073f;
 	text-align: center;
 	position: relative;
 }
@@ -150,7 +170,7 @@ body {
 	top: -11px;
 	font-size: 1em;
 	font-weight: 500;
-	background: #c3073f;
+	background: #1a1a1d;
 	left: 7px;
 	padding: 0 5px;
 	z-index: 2;
@@ -176,7 +196,7 @@ body {
 	font-size: 1.25em;
 	outline: 0;
 	border-radius: 4px;
-	color: #1a1a1d;
+	color: #c3073f;
 	margin: 0 0 15px;
 }
 
@@ -196,6 +216,7 @@ body {
 	padding: 0 25px;
 	height: 100%;
 	overflow-y: scroll;
+	border-right: 1px solid #aaa;
 }
 .chat-dashboard .chat-panel .searchbox {
 	position: relative;
@@ -238,16 +259,27 @@ body {
 	margin-left: 5px;
 	border-radius: 50%;
 }
-.chat-dashboard .chat-panel .chats-people .item .status.active {
+.chat-dashboard .chat-panel .chats-people .item .status.online {
 	background: green;
 }
-.chat-dashboard .chat-panel .chats-people .item .status.inactive {
+.chat-dashboard .chat-panel .chats-people .item .status.offline {
 	background: red;
 }
 .chat-dashboard .chat-container {
 	flex: 1;
 	position: relative;
 	height: 100%;
+}
+.chat-dashboard .chat-container .chat-not-selected {
+	padding: 1em;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.chat-dashboard .chat-container .chat-not-selected p {
+	font-size: 1.5em;
+	margin: 0;
 }
 .chat-dashboard .chat-container .chat-header {
 	display: flex;

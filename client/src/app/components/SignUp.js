@@ -1,6 +1,7 @@
 import React from "react";
-import {setSignUpErrorMessage, signUpInputChange, signUpLabelChange} from "../actions/inputActions";
+import {clearSignUpData, setSignUpErrorMessage, signUpInputChange, signUpLabelChange} from "../actions/inputActions";
 import {connect} from "react-redux";
+import {saveUserData} from "../actions/userDataActions";
 
 class SignUp extends React.Component {
     constructor(props) {
@@ -46,17 +47,20 @@ class SignUp extends React.Component {
     }
 
     saveDetails() {
+        let self = this;
         fetch('http://localhost:4000/api/addNewUser', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                username: this.props.inputs.username,
-                name: this.props.inputs.name,
-                email: this.props.inputs.email,
-                number: this.props.inputs.number,
-                password: this.props.inputs.password
+                username: self.props.inputs.signUpUsername,
+                name: self.props.inputs.signUpName,
+                email: self.props.inputs.signUpEmail,
+                number: self.props.inputs.signUpNumber,
+                password: self.props.inputs.signUpPassword,
+                status: "offline",
+                chatList: ""
             })
         })
             .then(res => res.json())
@@ -64,7 +68,19 @@ class SignUp extends React.Component {
                 if (res.error === true) {
                     this.props.setErrorMessage(res.message);
                 }else {
-                    //Success
+                    let data = {
+                        username: this.props.inputs.signUpUsername,
+                        name: this.props.inputs.signUpName,
+                        email: this.props.inputs.signUpEmail,
+                        number: this.props.inputs.signUpNumber,
+                        password: this.props.inputs.signUpPassword,
+                        status: "offline",
+                        chatList: ""
+                    };
+                    this.props.saveUserData(data);
+                    localStorage.setItem('username', data.username);
+                    this.props.clearSignUpData();
+                    window.location.href = '/chat';
                 }
             })
     }
@@ -107,7 +123,8 @@ class SignUp extends React.Component {
 
 const mapStateToProps = (state) => {
     return {
-        inputs: state.inputReducers
+        inputs: state.inputReducers,
+        userData: state.userDataReducer
     }
 };
 
@@ -126,6 +143,16 @@ const mapDispatchToProps = (dispatch) => {
         setErrorMessage: (message) => {
             dispatch(
                 setSignUpErrorMessage(message)
+            )
+        },
+        saveUserData: (data) => {
+            dispatch(
+                saveUserData(data)
+            )
+        },
+        clearSignUpData: () => {
+            dispatch(
+                clearSignUpData()
             )
         }
     }

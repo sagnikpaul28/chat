@@ -120,6 +120,16 @@ const inputReducers = (state = {
                 signUpErrorMessage: action.payload
             };
             break;
+        case 'SIGN_UP_INPUT_CLEAR':
+            state = {
+                ...state,
+                signUpUsername: '',
+                signUpName: '',
+                signUpEmail: '',
+                signUpNumber: '',
+                signUpPassword: '',
+                signUpConfirmPassword: ''
+            }
     }
     return state;
 };

@@ -100,3 +100,9 @@ export function setSignUpErrorMessage(message) {
         payload: message
     }
 }
+
+export function clearSignUpData() {
+    return {
+        type: 'SIGN_UP_INPUT_CLEAR'
+    }
+}
