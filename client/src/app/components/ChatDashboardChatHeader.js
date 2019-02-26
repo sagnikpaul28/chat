@@ -9,8 +9,9 @@ class ChatDashboardChatHeader extends React.Component {
     render() {
         return(
             <div className="chat-header">
-                <p className="person-name">Batman</p>
-                <p className="person-status active">online</p>
+                <img src={this.props.chat.selectedUsernameImage} alt={this.props.chat.selectedName} />
+                <p className="person-name">{this.props.chat.selectedName}</p>
+                <p className="person-status inactive">offline</p>
             </div>
         )
     }
@@ -18,7 +19,7 @@ class ChatDashboardChatHeader extends React.Component {
 
 const mapStateToProps = (state) => {
     return {
-
+        chat: state.chatReducers
     }
 };
 

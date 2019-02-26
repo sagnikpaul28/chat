@@ -285,12 +285,21 @@ a {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding: 0 15px 5px 10px;
+	padding: 10px 15px 10px 10px;
+	height: 60px;
+}
+.chat-dashboard .chat-container .chat-header img {
 	height: 50px;
+	width: 50px;
+	position: absolute;
+	left: 10px;
+	top: 5px;
+	border-radius: 50%;
 }
 .chat-dashboard .chat-container .chat-header .person-name {
 	font-size: 2.25em;
 	margin: 0;
+	padding-left: 60px;
 }
 .chat-dashboard .chat-container .chat-header .person-status {
 	margin: 0;
@@ -298,7 +307,7 @@ a {
 	font-size: 1.25em;
 	position: relative;
 }
-.chat-dashboard .chat-container .chat-header .person-status.active:before {
+.chat-dashboard .chat-container .chat-header .person-status:before {
 	position: absolute;
 	content: "";
 	height: 15px;
@@ -306,13 +315,18 @@ a {
 	top: 5px;
 	left: 0;
 	border-radius: 50%;
+}
+.chat-dashboard .chat-container .chat-header .person-status.active:before {
 	background: green;
+}
+.chat-dashboard .chat-container .chat-header .person-status.inactive:before {
+	background: red;
 }
 .chat-dashboard .chat-container .chat-body {
 	padding: 10px;
 	display: flex;
 	flex-direction: column-reverse;
-	height: calc(100vh - 135px);
+	height: calc(100vh - 155px);
 	position: absolute;
 	width: 100%;
 	overflow: scroll;

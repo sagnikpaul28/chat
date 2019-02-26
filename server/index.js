@@ -7,6 +7,9 @@ const mongoose = require("mongoose");
 
 //Import Schemas
 const Users = require('./models/userModel');
+const Chats = require('./models/chatModel');
+const Chat = Chats.Chats;
+const ChatDetails = Chats.ChatDetails;
 
 
 //Setup mongoose
@@ -78,11 +81,13 @@ router.post('/api/getChatListUserDetails', function(req, res, next) {
     let userDataList = [];
     for (let i = 0; i < chatList.length; i++) {
         Users.find({username: chatList[i]}).then(result => {
-            userDataList.push({
-                name: result[0].name,
-                userImage: result[0].userImage,
-                username: result[0].username
-            });
+            if (result.length > 0) {
+                userDataList.push({
+                    name: result[0].name,
+                    userImage: result[0].userImage,
+                    username: result[0].username
+                });
+            }
             if (chatListLength === userDataList.length) {
                 res.send(userDataList);
             }
@@ -92,20 +97,32 @@ router.post('/api/getChatListUserDetails', function(req, res, next) {
 
 router.post('/api/getContactsExceptChatListDetails', function(req, res, next) {
     let chatList = req.body.chatList;
-    chatList = chatList.split(',');
-    let chatListLength = chatList.length;
+    if (chatList.indexOf(',') === 0) {
+        chatList = chatList.split(',')
+    }else {
+        chatList = chatList.split(',');
+    }
     let userDataList = [];
     Users.find({}).then(result => {
         result.map(item => {
-            if (result.length === (userDataList.length + chatList.length)) {
-                return;
-            }
             let count = 0;
-            chatList.map(chatItem => {
-                if (chatItem === item.username) {
+            if (chatList.length > 2) {
+                if (result.length === (userDataList.length + chatList.length)) {
+                    return;
+                }
+                chatList.map(chatItem => {
+                    if (chatItem === item.username) {
+                        count++;
+                    }
+                });
+            }else {
+                if (result.length === (userDataList.length + chatList.length - 1)) {
+                    return;
+                }
+                if (chatList[1] === item.username ) {
                     count++;
                 }
-            });
+            }
             if (count === 0) {
                 userDataList.push({
                     name: item.name,
@@ -113,11 +130,60 @@ router.post('/api/getContactsExceptChatListDetails', function(req, res, next) {
                     username: item.username
                 });
             }
-            if (result.length === (userDataList.length + chatList.length)) {
-                res.send(userDataList);
+            if (chatList.length > 2) {
+                if (result.length === (userDataList.length + chatList.length)) {
+                    res.send(userDataList);
+                }
+            }else {
+                if (result.length === (userDataList.length + chatList.length - 1)) {
+                    res.send(userDataList);
+                }
             }
         })
     });
+});
+
+router.post('/api/fetchChat', function(req, res, next) {
+    let count = 0;
+    ChatDetails.find({}).then(result => {
+        result.map(item => {
+            count++;
+            let peopleList = item.people.sort();
+            let receivedPeopleList = JSON.parse(req.body.peopleList).sort();
+            if (JSON.stringify(peopleList) === JSON.stringify(receivedPeopleList)) {
+                res.send(item.chats);
+            }
+        });
+        if (count === result.length) {
+            res.send([]);
+        }
+    });
+});
+
+router.get('/api/test', function(req, res, next) {
+    // let value = {
+    //     message: 'test',
+    //     sentBy: 'test',
+    //     time: 1
+    // };
+    // ChatDetails.create({
+    //     people: ['sagnik'],
+    //     chats: value
+    // }).then( (result) => {
+    //     res.send(result);
+    // });
+    ChatDetails.find({}).then(result => {
+        let id = result[0]._id;
+        result = result[0];
+        let arrayList = [...result.chats];
+        arrayList.push({
+            message: 'Hello',
+            sentBy: 'superman',
+            time: 2
+        });
+        console.log(arrayList);
+        ChatDetails.findByIdAndUpdate(id, {chats: arrayList}).then(result => res.send(result));
+    })
 });
 
 app.use('/', router);

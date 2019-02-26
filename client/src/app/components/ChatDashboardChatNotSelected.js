@@ -3,8 +3,9 @@ import {connect} from "react-redux";
 
 class ChatDashboardChatNotSelected extends React.Component {
     constructor(props) {
-        super(props)
+        super(props);
     }
+
     render() {
         return (
             <div className="chat-not-selected">
@@ -26,4 +27,4 @@ const mapDispatchToProps = (dispatch) => {
     }
 };
 
-export default connect (mapStateToProps, mapDispatchToProps)(ChatDashboardChatNotSelected);
+export default connect(mapStateToProps, mapDispatchToProps)(ChatDashboardChatNotSelected);

@@ -15,7 +15,8 @@ const inputReducers = (state = {
     signUpNumberLabel: '',
     signUpPasswordLabel: '',
     signUpConfirmPasswordLabel: '',
-    signUpErrorMessage: ''
+    signUpErrorMessage: '',
+    chatMessage: ''
 }, action) => {
     switch (action.type) {
         case "HOME_USERNAME_CHANGE" :
@@ -129,7 +130,14 @@ const inputReducers = (state = {
                 signUpNumber: '',
                 signUpPassword: '',
                 signUpConfirmPassword: ''
-            }
+            };
+            break;
+        case 'CHAT_MESSAGE_CHANGE':
+            state = {
+                ...state,
+                chatMessage: action.payload
+            };
+            break;
     }
     return state;
 };

@@ -106,3 +106,10 @@ export function clearSignUpData() {
         type: 'SIGN_UP_INPUT_CLEAR'
     }
 }
+
+export function changeChatMessage(message) {
+    return {
+        type: 'CHAT_MESSAGE_CHANGE',
+        payload: message
+    }
+}
