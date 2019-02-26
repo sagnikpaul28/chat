@@ -1,12 +1,29 @@
 import React from "react";
 import {connect} from "react-redux";
+import {saveChatMessages} from "../actions/chatActions";
+import io from "socket.io-client";
 
 class ChatDashboardChatBody extends React.Component {
     chatListHTML;
+    socket;
 
     constructor(props) {
         super(props);
-        this.chatListHTML = '';
+        let self = this;
+        self.chatListHTML = '';
+        self.socket = io('http://localhost:4000');
+        self.socket.on('message', function(data) {
+            if ((data.sentBy === self.props.userData.userData.username && data.sentTo === self.props.chat.selectedUsername) || (data.sentTo === self.props.userData.userData.username && data.sentBy === self.props.chat.selectedUsername)) {
+                let newSelectedChatList = JSON.parse(self.props.chat.selectedChatList);
+                newSelectedChatList.push({
+                    message: data.message,
+                    sentBy: data.sentBy,
+                    time: data.time
+                });
+                newSelectedChatList = JSON.stringify(newSelectedChatList);
+                self.props.saveChatMessage(newSelectedChatList);
+            }
+        });
     }
 
     componentWillUpdate(nextProps, nextState, nextContext) {
@@ -36,7 +53,11 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-
+        saveChatMessage: (chat) => {
+            dispatch(
+                saveChatMessages(chat)
+            )
+        }
     }
 };
 

@@ -325,12 +325,13 @@ a {
 .chat-dashboard .chat-container .chat-body {
 	padding: 10px;
 	display: flex;
-	flex-direction: column-reverse;
+	flex-direction: column;
 	height: calc(100vh - 155px);
 	position: absolute;
 	width: 100%;
 	overflow: scroll;
 	bottom: 60px;
+	justify-content: end;
 }
 .chat-dashboard .chat-container .chat-body .chat-text.received {
 	text-align: left;

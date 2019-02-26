@@ -2,13 +2,8 @@ import React from "react";
 import io from 'socket.io-client';
 import {connect} from "react-redux";
 import {saveUserData} from "../actions/userDataActions";
-import {saveChatList, saveChatListHTML, saveExceptChatList, saveExceptChatListHTML} from "../actions/dashboardActions";
 import ChatDashboardSearch from "./ChatDashboardSearch";
 import ChatDashboardChatList from "./ChatDashboardChatList";
-import ChatDashboardChatHeader from "./ChatDashboardChatHeader";
-import ChatDashboardChatBody from "./ChatDashboardChatBody";
-import ChatDashboardChatMessageInput from "./ChatDashboardChatMessageInput";
-import ChatDashboardChatNotSelected from "./ChatDashboardChatNotSelected";
 import ChatDashboardChatContainer from "./ChatDashboardChatContainer";
 
 class ChatDashboard extends React.Component {

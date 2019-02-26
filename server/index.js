@@ -41,7 +41,85 @@ app.use(bodyParser.json()).use(bodyParser.urlencoded({ extended: true }));
 let io = socket(server);
 
 io.on('connection', function(socket) {
-    // console.log(socket.id);
+    socket.on('message', function(data) {
+
+        //Change SentBy's chat list
+        Users.find({username: data.sentBy})
+            .then(result => {
+                let chatList = result[0].chatList;
+                if (chatList.length) {
+                    //If chatList is not empty
+                    chatList = chatList.split(',');
+                    if (chatList.findIndex( item => item === data.sentTo ) >= 0) {
+                        //Already in Chat List
+                        chatList.splice(chatList.findIndex( item => item === data.sentTo ), 1);
+                        chatList.unshift(data.sentTo);
+                    }else {
+                        //New Entry in chat list
+                        chatList.unshift(data.sentTo);
+                    }
+                }else {
+                    chatList = [data.sentTo];
+                }
+                Users.findOneAndUpdate({username: data.sentBy}, {chatList: chatList})
+                    // .then(res => console.log(res));
+            });
+
+        //Change SentTo's chat list
+        Users.find({username: data.sentTo})
+            .then(result => {
+                let chatList = result[0].chatList;
+                if (chatList.length) {
+                    //If chatList is not empty
+                    chatList = chatList.split(',');
+                    if (chatList.findIndex( item => item === data.sentBy ) >= 0) {
+                        //Already in Chat List
+                        chatList.splice(chatList.findIndex( item => item === data.sentBy ), 1);
+                        chatList.unshift(data.sentBy);
+                    }else {
+                        //New Entry in chat list
+                        chatList.unshift(data.sentBy);
+                    }
+                }else {
+                    chatList = [data.sentBy];
+                }
+                Users.findOneAndUpdate({username: data.sentTo}, {chatList: chatList})
+                    // .then(res => console.log(res));
+            });
+
+        let peopleList = [data.sentBy, data.sentTo].sort();
+
+        //Add the message to db
+        ChatDetails.find({people: peopleList}).then(result=> {
+            let chatList = [];
+            if (result.length > 0) {
+                let id = result[0]._id;
+                chatList = result[0].chats;
+                chatList.push({
+                    message: data.message,
+                    sentBy: data.sentBy,
+                    time: data.time
+                });
+                ChatDetails.findByIdAndUpdate(id, {chats: chatList})
+                    // .then(reslt => console.log(reslt));
+            }else {
+                chatList = [{
+                    message: data.message,
+                    sentBy: data.sentBy,
+                    time: data.time
+                }];
+                ChatDetails.create({
+                        people: peopleList,
+                        chats: chatList
+                    })
+                    // .then( reslt => console.log(reslt) );
+            }
+        });
+
+
+        //Send a broadcast to other users and change html in their system
+        io.sockets.emit('message', data);
+    })
 });
 
 
@@ -90,6 +168,7 @@ router.post('/api/getChatListUserDetails', function(req, res, next) {
             }
             if (chatListLength === userDataList.length) {
                 res.send(userDataList);
+                return;
             }
         });
     }
@@ -106,7 +185,7 @@ router.post('/api/getContactsExceptChatListDetails', function(req, res, next) {
     Users.find({}).then(result => {
         result.map(item => {
             let count = 0;
-            if (chatList.length > 2) {
+            if (chatList[0].length) {
                 if (result.length === (userDataList.length + chatList.length)) {
                     return;
                 }
@@ -130,7 +209,7 @@ router.post('/api/getContactsExceptChatListDetails', function(req, res, next) {
                     username: item.username
                 });
             }
-            if (chatList.length > 2) {
+            if (chatList[0].length) {
                 if (result.length === (userDataList.length + chatList.length)) {
                     res.send(userDataList);
                 }
@@ -145,17 +224,20 @@ router.post('/api/getContactsExceptChatListDetails', function(req, res, next) {
 
 router.post('/api/fetchChat', function(req, res, next) {
     let count = 0;
+    let output = [];
     ChatDetails.find({}).then(result => {
-        result.map(item => {
+        for (let i = 0; i < result.length; i++) {
             count++;
-            let peopleList = item.people.sort();
-            let receivedPeopleList = JSON.parse(req.body.peopleList).sort();
+            let peopleList = result[i].people.sort();
+            let receivedPeopleList = req.body.peopleList.sort();
             if (JSON.stringify(peopleList) === JSON.stringify(receivedPeopleList)) {
-                res.send(item.chats);
+                output = result[i].chats;
+                res.send(output);
+                break;
             }
-        });
+        }
         if (count === result.length) {
-            res.send([]);
+            res.send(output);
         }
     });
 });
@@ -172,17 +254,22 @@ router.get('/api/test', function(req, res, next) {
     // }).then( (result) => {
     //     res.send(result);
     // });
+
+    // ChatDetails.find({}).then(result => {
+    //     let id = result[0]._id;
+    //     result = result[0];
+    //     let arrayList = [...result.chats];
+    //     arrayList.push({
+    //         message: 'Hello',
+    //         sentBy: 'superman',
+    //         time: 2
+    //     });
+    //     console.log(arrayList);
+    //     ChatDetails.findByIdAndUpdate(id, {chats: arrayList}).then(result => res.send(result));
+    // })
+
     ChatDetails.find({}).then(result => {
-        let id = result[0]._id;
-        result = result[0];
-        let arrayList = [...result.chats];
-        arrayList.push({
-            message: 'Hello',
-            sentBy: 'superman',
-            time: 2
-        });
-        console.log(arrayList);
-        ChatDetails.findByIdAndUpdate(id, {chats: arrayList}).then(result => res.send(result));
+        res.send(result);
     })
 });
 

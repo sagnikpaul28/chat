@@ -15,7 +15,6 @@ class ChatDashboardChatList extends React.Component {
         }
 
         if (prevProps.dashboardData.chatList !== this.props.dashboardData.chatList) {
-            console.log(this.props.dashboardData.chatList, this.props.dashboardData.chatList.length);
             if (this.props.dashboardData.chatList.length === 0) {
                 this.props.saveChatListHTML(
                     '<p>Chatlist is empty</p>'
@@ -43,6 +42,7 @@ class ChatDashboardChatList extends React.Component {
     }
 
     onContactClick(e) {
+        this.props.saveChatMessages("[]");
         this.props.onChatSelect(
             e.target.id ? e.target.id : e.target.parentElement.id,
             e.target.id ? e.target.dataset.name : e.target.parentElement.dataset.name,
@@ -58,7 +58,7 @@ class ChatDashboardChatList extends React.Component {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                peopleList: JSON.stringify([this.props.data.userData.username, username])
+                peopleList: [this.props.data.userData.username, username]
             })
         })
             .then(res => res.json())
