@@ -6,6 +6,16 @@ const userDataReducers = (state = {
             state = {
                 ...state,
                 userData: action.payload
+            };
+            break;
+        case "SAVE_CHAT_LIST":
+            let userData = {
+                ...state.userData,
+                chatList: action.payload
+            };
+            state = {
+                ...state,
+                userData: userData
             }
     }
     return state;

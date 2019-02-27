@@ -61,8 +61,8 @@ io.on('connection', function(socket) {
                 }else {
                     chatList = [data.sentTo];
                 }
-                Users.findOneAndUpdate({username: data.sentBy}, {chatList: chatList})
-                    // .then(res => console.log(res));
+                Users.findOneAndUpdate({username: data.sentBy}, {chatList: chatList.toString()})
+                    .then(res => console.log(res));
             });
 
         //Change SentTo's chat list
@@ -101,7 +101,7 @@ io.on('connection', function(socket) {
                     time: data.time
                 });
                 ChatDetails.findByIdAndUpdate(id, {chats: chatList})
-                    // .then(reslt => console.log(reslt));
+                    .then(reslt => console.log(reslt));
             }else {
                 chatList = [{
                     message: data.message,
@@ -112,7 +112,7 @@ io.on('connection', function(socket) {
                         people: peopleList,
                         chats: chatList
                     })
-                    // .then( reslt => console.log(reslt) );
+                    .then( reslt => console.log(reslt) );
             }
         });
 

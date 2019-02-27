@@ -4,3 +4,10 @@ export function saveUserData(data) {
         payload: data
     }
 }
+
+export function saveChatList(data) {
+    return {
+        type: "SAVE_CHAT_LIST",
+        payload: data
+    }
+}

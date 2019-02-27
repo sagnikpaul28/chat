@@ -331,7 +331,7 @@ a {
 	width: 100%;
 	overflow: scroll;
 	bottom: 60px;
-	justify-content: end;
+	justify-content: flex-end;
 }
 .chat-dashboard .chat-container .chat-body .chat-text.received {
 	text-align: left;
