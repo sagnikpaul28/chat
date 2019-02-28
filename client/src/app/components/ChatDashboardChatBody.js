@@ -1,7 +1,6 @@
 import React from "react";
 import {connect} from "react-redux";
 import {saveChatMessages} from "../actions/chatActions";
-import io from "socket.io-client";
 import {saveChatList, saveExceptChatList} from "../actions/dashboardActions";
 
 class ChatDashboardChatBody extends React.Component {
@@ -10,6 +9,7 @@ class ChatDashboardChatBody extends React.Component {
 
     constructor(props) {
         super(props);
+        self.chatListHTML = '';
     }
 
     componentWillUpdate(nextProps, nextState, nextContext) {

@@ -25,3 +25,10 @@ export function saveExceptChatListHTML(data) {
         payload: data
     }
 }
+
+export function setOnlineStatus(usernameList) {
+    return {
+        type: 'SET_ONLINE_STATUS',
+        payload:  usernameList
+    }
+}

@@ -234,6 +234,11 @@ a {
 	left: 12px;
 	font-size: 1.2em;
 }
+.chat-dashboard .chat-panel .chats-people p {
+	text-align: center;
+	margin: 20px 0 0px;
+	font-size: 1.5em;
+}
 .chat-dashboard .chat-panel .chats-people .item {
 	display: flex;
 	margin: 15px 0 10px;

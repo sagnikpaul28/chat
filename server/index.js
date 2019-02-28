@@ -8,7 +8,6 @@ const mongoose = require("mongoose");
 //Import Schemas
 const Users = require('./models/userModel');
 const Chats = require('./models/chatModel');
-const Chat = Chats.Chats;
 const ChatDetails = Chats.ChatDetails;
 
 
@@ -36,13 +35,30 @@ app.use(function (req, res, next) {
 //Setup bodyParser
 app.use(bodyParser.json()).use(bodyParser.urlencoded({ extended: true }));
 
+//Track users who are online
+let onlineListToSocketId = [];
+
 
 //Setup Socket.io
 let io = socket(server);
 
 io.on('connection', function(socket) {
-    socket.on('message', function(data) {
+    if (socket.handshake.query.username) {
+        if (onlineListToSocketId[socket.handshake.query.username]) {
+            onlineListToSocketId[socket.handshake.query.username].push(socket.id);
+        }else {
+            onlineListToSocketId[socket.handshake.query.username] = [socket.id]
+        }
+    }
+    let onlineList = [];
+    for (let key in onlineListToSocketId) {
+        onlineList.push(key);
+    }
+    io.sockets.emit('online-status', {
+        list: onlineList
+    });
 
+    socket.on('message', function(data) {
         //Change SentBy's chat list
         Users.find({username: data.sentBy})
             .then(result => {
@@ -116,10 +132,31 @@ io.on('connection', function(socket) {
             }
         });
 
-
         //Send a broadcast to other users and change html in their system
         io.sockets.emit('message', data);
-    })
+    });
+
+    socket.on('disconnect', function() {
+        for (let key in onlineListToSocketId) {
+            if (onlineListToSocketId[key].length === 1 && onlineListToSocketId[key][0] === socket.id) {
+                delete onlineListToSocketId[key];
+            }else {
+                for (let i = 0; i < onlineListToSocketId[key].length; i++) {
+                    if (onlineListToSocketId[key][i] === socket.id) {
+                        onlineListToSocketId[key].splice(i, 1);
+                    }
+                }
+            }
+        }
+        //Send list of all users online
+        let onlineList = [];
+        for (let key in onlineListToSocketId) {
+            onlineList.push(key);
+        }
+        io.sockets.emit('online-status', {
+            list: onlineList
+        })
+    });
 });
 
 

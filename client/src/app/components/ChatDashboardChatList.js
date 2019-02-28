@@ -1,11 +1,56 @@
 import React from "react";
 import {connect} from "react-redux";
-import {saveChatList, saveChatListHTML, saveExceptChatList, saveExceptChatListHTML} from "../actions/dashboardActions";
+import {
+    saveChatList,
+    saveChatListHTML,
+    saveExceptChatList,
+    saveExceptChatListHTML,
+    setOnlineStatus
+} from "../actions/dashboardActions";
 import {onChatSelect, saveChatMessages} from "../actions/chatActions";
+import io from "socket.io-client";
 
 class ChatDashboardChatList extends React.Component {
+    onlineList;
+
     constructor(props) {
         super(props);
+        this.socket = io('http://localhost:4000');
+        this.socket.on('online-status', data => {
+            console.log(data.list);
+            if (this.props.dashboardData.chatList || this.props.dashboardData.exceptChatList) {
+                this.props.setOnlineStatus(data);
+            }else {
+                this.onlineList = data.list;
+            }
+        })
+    }
+
+    renderChatListHTML() {
+        if (!this.props.dashboardData.chatList) {
+            this.props.saveChatListHTML(
+                <p>Chatlist is empty</p>
+            );
+        }else {
+            this.props.saveChatListHTML(
+                this.props.dashboardData.chatList.map(item => {
+                    console.log(item.username, item.status);
+                    return <div className="item" data-name={item.name} key={item.username} id={item.username}
+                                onClick={this.onContactClick.bind(this)}><img className="item-image"
+                                                                              src={item.userImage}
+                                                                              alt={item.username}/><p
+                        className="item-name">{item.name}</p><span className={item.status + " status"}/></div>
+                })
+            )
+        }
+    }
+
+    renderExceptChatListHTML() {
+        this.props.saveExceptChatListHTML(
+            this.props.dashboardData.exceptChatList.map(item => {
+                return <div className="item" data-name={item.name} key={item.username} id={item.username} onClick={this.onContactClick.bind(this)}><img className="item-image" src={item.userImage} alt={item.username}/><p className="item-name">{item.name}</p><span className={item.status + " status"}/></div>
+            })
+        )
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -15,29 +60,16 @@ class ChatDashboardChatList extends React.Component {
         }
 
         if (prevProps.dashboardData.chatList !== this.props.dashboardData.chatList) {
-            if (this.props.dashboardData.chatList.length === 0) {
-                this.props.saveChatListHTML(
-                    '<p>Chatlist is empty</p>'
-                );
-            }else {
-                this.props.saveChatListHTML(
-                    this.props.dashboardData.chatList.map(item => {
-                        return <div className="item" data-name={item.name} key={item.username} id={item.username}
-                                    onClick={this.onContactClick.bind(this)}><img className="item-image"
-                                                                                  src={item.userImage}
-                                                                                  alt={item.username}/><p
-                            className="item-name">{item.name}</p><span className={item.status + " status"}/></div>
-                    })
-                )
-            }
+            this.renderChatListHTML();
         }
 
         if (prevProps.dashboardData.exceptChatList !== this.props.dashboardData.exceptChatList) {
-            this.props.saveExceptChatListHTML(
-                this.props.dashboardData.exceptChatList.map(item => {
-                    return <div className="item" data-name={item.name} key={item.username} id={item.username} onClick={this.onContactClick.bind(this)}><img className="item-image" src={item.userImage} alt={item.username}/><p className="item-name">{item.name}</p><span className={item.status + " status"}/></div>
-                })
-            )
+            this.renderExceptChatListHTML();
+        }
+
+        if (prevProps.dashboardData.updateList !== this.props.dashboardData.updateList) {
+            this.renderChatListHTML();
+            this.renderExceptChatListHTML();
         }
     }
 
@@ -79,12 +111,15 @@ class ChatDashboardChatList extends React.Component {
         })
             .then(res => res.json())
             .then(res => {
-                this.props.saveChatList(
-                    res.map(item => {
-                        item.status = 'offline';
-                        return item;
-                    })
-                );
+                for (let i = 0; i < res.length; i++) {
+                    res[i].status = "offline";
+                    for (let j = 0; j < this.onlineList.length; j++) {
+                        if (this.onlineList[j] === res[i].username) {
+                            res[i].status = "online";
+                        }
+                    }
+                }
+                this.props.saveChatList(res);
             });
 
         fetch('http://localhost:4000/api/getContactsExceptChatListDetails', {
@@ -98,12 +133,15 @@ class ChatDashboardChatList extends React.Component {
         })
             .then(res => res.json())
             .then(res => {
-                this.props.saveExceptChatList(
-                    res.map(item => {
-                        item.status = 'offline';
-                        return item;
-                    })
-                );
+                for (let i = 0; i < res.length; i++) {
+                    res[i].status = "offline";
+                    for (let j = 0; j < this.onlineList.length; j++) {
+                        if (this.onlineList[j] === res[i].username) {
+                            res[i].status = "online";
+                        }
+                    }
+                }
+                this.props.saveExceptChatList(res);
             });
     }
 
@@ -156,6 +194,11 @@ const mapDispatchToProps = (dispatch) => {
         saveChatMessages: (chat) => {
             dispatch(
                 saveChatMessages(chat)
+            )
+        },
+        setOnlineStatus: (usernameList) => {
+            dispatch(
+                setOnlineStatus(usernameList)
             )
         }
     }

@@ -6,14 +6,13 @@ import ChatDashboardChatHeader from "./ChatDashboardChatHeader";
 import ChatDashboardChatNotSelected from "./ChatDashboardChatNotSelected";
 import io from "socket.io-client";
 import {saveChatMessages} from "../actions/chatActions";
-import {saveChatList, saveExceptChatList} from "../actions/dashboardActions";
+import {changeOnlineStatus, saveChatList, saveExceptChatList} from "../actions/dashboardActions";
 
 class ChatDashboardChatContainer extends React.Component {
     constructor(props) {
         super(props);
         let self = this;
-        self.chatListHTML = '';
-        self.socket = io('http://localhost:4000');
+        self.socket = io('http://localhost:4000?username='+localStorage.getItem('username'));
         self.socket.on('message', function(data) {
 
             let addToChatListUsername = "";
@@ -134,6 +133,11 @@ const mapDispatchToProps = (dispatch) => {
                 saveChatList(data)
             )
         },
+        changeOnlineStatus: (username, status) => {
+            dispatch(
+                changeOnlineStatus(username, status)
+            )
+        }
     }
 };
 
