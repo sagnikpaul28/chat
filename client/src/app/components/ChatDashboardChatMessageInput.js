@@ -10,11 +10,20 @@ class ChatDashboardChatMessageInput extends React.Component {
         this.socket = io('http://localhost:4000');
     }
 
+    onKeyEnter(e) {
+        if (e.keyCode === 13) {
+            this.onMessageSend();
+        }
+    }
+
     onInputChange(e) {
         this.props.changeChatMessage(e.target.value);
     }
 
     onMessageSend() {
+        if (this.props.inputData.chatMessage.length === 0 ){
+            return;
+        }
         this.socket.emit('message', {
             message: this.props.inputData.chatMessage,
             sentBy: this.props.userData.userData.username,
@@ -26,7 +35,7 @@ class ChatDashboardChatMessageInput extends React.Component {
 
     render() {
         return (
-            <div className="chat-message-type">
+            <div className="chat-message-type" onKeyDown={this.onKeyEnter.bind(this)}>
                 <input type="text" name="chat-message" placeholder="Start typing a message" value={this.props.inputData.chatMessage} onChange={this.onInputChange.bind(this)}/>
                 <span className="send glyphicon glyphicon-send" onClick={this.onMessageSend.bind(this)}/>
             </div>
