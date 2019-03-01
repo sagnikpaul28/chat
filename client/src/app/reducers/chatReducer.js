@@ -3,6 +3,7 @@ const chatReducers = (state = {
     selectedUsername: '',
     selectedName: '',
     selectedUsernameImage: '',
+    selectedUserStatus: '',
     selectedChatList: ''
 }, action) => {
     switch (action.type) {
@@ -12,7 +13,8 @@ const chatReducers = (state = {
                 isChatSelected: true,
                 selectedUsername: action.payload.username,
                 selectedUsernameImage: action.payload.image,
-                selectedName: action.payload.name
+                selectedName: action.payload.name,
+                selectedUserStatus: action.payload.status
             };
             break;
         case "SAVE_CHAT_MESSAGES":

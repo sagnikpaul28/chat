@@ -37,6 +37,7 @@ app.use(bodyParser.json()).use(bodyParser.urlencoded({ extended: true }));
 
 //Track users who are online
 let onlineListToSocketId = [];
+let storedOnlineList = [];
 
 
 //Setup Socket.io
@@ -54,9 +55,12 @@ io.on('connection', function(socket) {
     for (let key in onlineListToSocketId) {
         onlineList.push(key);
     }
-    io.sockets.emit('online-status', {
-        list: onlineList
-    });
+    if (JSON.stringify(storedOnlineList) !== JSON.stringify(onlineList)) {
+        io.sockets.emit('online-status', {
+            list: onlineList
+        });
+        storedOnlineList = onlineList;
+    }
 
     socket.on('message', function(data) {
         //Change SentBy's chat list
@@ -100,7 +104,7 @@ io.on('connection', function(socket) {
                     chatList = [data.sentBy];
                 }
                 Users.findOneAndUpdate({username: data.sentTo}, {chatList: chatList})
-                    // .then(res => console.log(res));
+                    .then(res => console.log(res));
             });
 
         let peopleList = [data.sentBy, data.sentTo].sort();
@@ -153,9 +157,13 @@ io.on('connection', function(socket) {
         for (let key in onlineListToSocketId) {
             onlineList.push(key);
         }
-        io.sockets.emit('online-status', {
-            list: onlineList
-        })
+        if (JSON.stringify(storedOnlineList) !== JSON.stringify(onlineList)) {
+            io.sockets.emit('online-status', {
+                list: onlineList
+            });
+            storedOnlineList = onlineList;
+        }
+
     });
 });
 

@@ -1,10 +1,11 @@
-export function onChatSelect(username, name, imageUrl) {
+export function onChatSelect(username, name, imageUrl, status) {
     return {
         type: 'SELECTED_CHAT',
         payload: {
             username: username,
             image: imageUrl,
-            name: name
+            name: name,
+            status: status
         }
     }
 }

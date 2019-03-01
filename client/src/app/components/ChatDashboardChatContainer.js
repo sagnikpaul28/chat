@@ -6,7 +6,7 @@ import ChatDashboardChatHeader from "./ChatDashboardChatHeader";
 import ChatDashboardChatNotSelected from "./ChatDashboardChatNotSelected";
 import io from "socket.io-client";
 import {saveChatMessages} from "../actions/chatActions";
-import {changeOnlineStatus, saveChatList, saveExceptChatList} from "../actions/dashboardActions";
+import {saveChatList, saveExceptChatList} from "../actions/dashboardActions";
 
 class ChatDashboardChatContainer extends React.Component {
     constructor(props) {
@@ -131,11 +131,6 @@ const mapDispatchToProps = (dispatch) => {
         saveChatList: (data) => {
             dispatch(
                 saveChatList(data)
-            )
-        },
-        changeOnlineStatus: (username, status) => {
-            dispatch(
-                changeOnlineStatus(username, status)
             )
         }
     }

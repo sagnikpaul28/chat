@@ -11,7 +11,7 @@ class ChatDashboardChatHeader extends React.Component {
             <div className="chat-header">
                 <img src={this.props.chat.selectedUsernameImage} alt={this.props.chat.selectedName} />
                 <p className="person-name">{this.props.chat.selectedName}</p>
-                <p className="person-status inactive">offline</p>
+                <p className={"person-status " + this.props.chat.selectedUserStatus}>{this.props.chat.selectedUserStatus}</p>
             </div>
         )
     }

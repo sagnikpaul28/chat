@@ -16,7 +16,8 @@ class ChatDashboardChatBody extends React.Component {
         if (nextProps.chat.selectedChatList !== this.props.chat.selectedChatList) {
             let chatList = JSON.parse(nextProps.chat.selectedChatList);
             this.chatListHTML = chatList.map(item => {
-                return <div className={(item.sentBy === this.props.userData.userData.username) ? "chat-text sent" : "chat-text received"}><p>{item.message}</p></div>
+                let date = new Date(item.time);
+                return <div key={item.message+item._id} className={(item.sentBy === this.props.userData.userData.username) ? "chat-text sent" : "chat-text received"}><p>{item.message}</p><span className="chat-text-time">{date.getHours() + ":" + date.getMinutes()}</span> </div>
             });
         }
     }

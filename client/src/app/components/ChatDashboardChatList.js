@@ -15,10 +15,10 @@ class ChatDashboardChatList extends React.Component {
 
     constructor(props) {
         super(props);
-        this.socket = io('http://localhost:4000');
+        this.socket = io('http://localhost:4000?username='+localStorage.getItem('username'));
         this.socket.on('online-status', data => {
-            console.log(data.list);
             if (this.props.dashboardData.chatList || this.props.dashboardData.exceptChatList) {
+                console.log("Event fired");
                 this.props.setOnlineStatus(data);
             }else {
                 this.onlineList = data.list;
@@ -27,14 +27,9 @@ class ChatDashboardChatList extends React.Component {
     }
 
     renderChatListHTML() {
-        if (!this.props.dashboardData.chatList) {
-            this.props.saveChatListHTML(
-                <p>Chatlist is empty</p>
-            );
-        }else {
+        if (this.props.dashboardData.chatList) {
             this.props.saveChatListHTML(
                 this.props.dashboardData.chatList.map(item => {
-                    console.log(item.username, item.status);
                     return <div className="item" data-name={item.name} key={item.username} id={item.username}
                                 onClick={this.onContactClick.bind(this)}><img className="item-image"
                                                                               src={item.userImage}
@@ -55,21 +50,26 @@ class ChatDashboardChatList extends React.Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (!prevProps.data.userData && this.props.data.userData) {
+            console.log("A");
             this.chatList = this.props.data.userData.chatList;
             this.fetchChatList(this.chatList);
         }
 
         if (prevProps.dashboardData.chatList !== this.props.dashboardData.chatList) {
             this.renderChatListHTML();
+            console.log("B")
         }
 
         if (prevProps.dashboardData.exceptChatList !== this.props.dashboardData.exceptChatList) {
             this.renderExceptChatListHTML();
+            console.log("C")
         }
 
         if (prevProps.dashboardData.updateList !== this.props.dashboardData.updateList) {
+            console.log(prevProps.dashboardData.updateList, this.props.dashboardData.updateList);
             this.renderChatListHTML();
             this.renderExceptChatListHTML();
+            console.log("D");
         }
     }
 
@@ -78,7 +78,8 @@ class ChatDashboardChatList extends React.Component {
         this.props.onChatSelect(
             e.target.id ? e.target.id : e.target.parentElement.id,
             e.target.id ? e.target.dataset.name : e.target.parentElement.dataset.name,
-            e.target.id ? e.target.childNodes[0].src : e.target.parentElement.childNodes[0].src
+            e.target.id ? e.target.childNodes[0].src : e.target.parentElement.childNodes[0].src,
+            e.target.id ? e.target.childNodes[2].classList[0] : e.target.parentElement.childNodes[2].classList[0]
         );
         this.fetchChat(e.target.id ? e.target.id : e.target.parentElement.id);
     }
@@ -111,6 +112,7 @@ class ChatDashboardChatList extends React.Component {
         })
             .then(res => res.json())
             .then(res => {
+                console.log(this.onlineList);
                 for (let i = 0; i < res.length; i++) {
                     res[i].status = "offline";
                     for (let j = 0; j < this.onlineList.length; j++) {
@@ -186,9 +188,9 @@ const mapDispatchToProps = (dispatch) => {
                 saveExceptChatListHTML(data)
             )
         },
-        onChatSelect: (username, name, imageUrl) => {
+        onChatSelect: (username, name, imageUrl, status) => {
             dispatch(
-                onChatSelect(username, name, imageUrl)
+                onChatSelect(username, name, imageUrl, status)
             )
         },
         saveChatMessages: (chat) => {
