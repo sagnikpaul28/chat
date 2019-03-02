@@ -1,5 +1,4 @@
 import React from "react";
-import io from 'socket.io-client';
 import {connect} from "react-redux";
 import {saveUserData} from "../actions/userDataActions";
 import ChatDashboardSearch from "./ChatDashboardSearch";
@@ -10,7 +9,6 @@ class ChatDashboard extends React.Component {
     chatList;
     constructor(props) {
         super(props);
-        const socket = io('http://localhost:4000');
         if (!this.props.data.userData) {
             if (localStorage.getItem('username')) {
                 this.fetchUserDetails(localStorage.getItem('username'));

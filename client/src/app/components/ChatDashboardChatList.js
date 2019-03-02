@@ -12,13 +12,13 @@ import io from "socket.io-client";
 
 class ChatDashboardChatList extends React.Component {
     onlineList;
+    chatListHTML;
 
     constructor(props) {
         super(props);
         this.socket = io('http://localhost:4000?username='+localStorage.getItem('username'));
         this.socket.on('online-status', data => {
             if (this.props.dashboardData.chatList || this.props.dashboardData.exceptChatList) {
-                console.log("Event fired");
                 this.props.setOnlineStatus(data);
             }else {
                 this.onlineList = data.list;
@@ -50,26 +50,26 @@ class ChatDashboardChatList extends React.Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (!prevProps.data.userData && this.props.data.userData) {
-            console.log("A");
             this.chatList = this.props.data.userData.chatList;
             this.fetchChatList(this.chatList);
         }
 
         if (prevProps.dashboardData.chatList !== this.props.dashboardData.chatList) {
             this.renderChatListHTML();
-            console.log("B")
         }
 
         if (prevProps.dashboardData.exceptChatList !== this.props.dashboardData.exceptChatList) {
             this.renderExceptChatListHTML();
-            console.log("C")
         }
 
         if (prevProps.dashboardData.updateList !== this.props.dashboardData.updateList) {
             console.log(prevProps.dashboardData.updateList, this.props.dashboardData.updateList);
             this.renderChatListHTML();
             this.renderExceptChatListHTML();
-            console.log("D");
+        }
+
+        if (prevProps.inputs.chatSearch !== this.props.inputs.chatSearch) {
+            this.fetchSearchList();
         }
     }
 
@@ -112,7 +112,6 @@ class ChatDashboardChatList extends React.Component {
         })
             .then(res => res.json())
             .then(res => {
-                console.log(this.onlineList);
                 for (let i = 0; i < res.length; i++) {
                     res[i].status = "offline";
                     for (let j = 0; j < this.onlineList.length; j++) {
@@ -147,14 +146,48 @@ class ChatDashboardChatList extends React.Component {
             });
     }
 
+    fetchSearchList() {
+        fetch('http://localhost:4000/api/getSearchResults', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                usernameQuery: this.props.inputs.chatSearch
+            })
+        })
+            .then(res => res.json())
+            .then(res => {
+                this.chatListHTML = res.map(item => {
+                    return <div className="item" data-name={item.name} key={item.username} id={item.username}
+                                onClick={this.onContactClick.bind(this)}><img className="item-image"
+                                                                              src={item.userImage}
+                                                                              alt={item.username}/><p
+                        className="item-name">{item.name}</p><span className={item.status + " status"}/></div>
+                });
+                this.forceUpdate();
+            });
+    }
+
     render() {
-        return (
-            <div className="chats-people">
-                {this.props.dashboardData.chatListHTML}
-                <hr/>
-                {this.props.dashboardData.exceptChatListHTML}
-            </div>
-        )
+        if (!this.props.inputs.chatSearch) {
+            return (
+                <div className="chats-people">
+                    <p className="chat-list-title">Chats</p>
+                    {this.props.dashboardData.chatListHTML}
+                    <hr/>
+                    <p className="contact-list-title">Other Contacts</p>
+                    {this.props.dashboardData.exceptChatListHTML}
+                </div>
+            )
+        }else {
+            return(
+                <div className="chats-people">
+                    <p className="chat-list-title">Search List</p>
+                    {this.chatListHTML}
+                </div>
+            )
+        }
     }
 }
 
@@ -162,7 +195,8 @@ const mapStateToProps = (state) => {
     return {
         data: state.userDataReducer,
         dashboardData: state.dashboardReducers,
-        chat: state.chatReducers
+        chat: state.chatReducers,
+        inputs: state.inputReducers
     }
 };
 

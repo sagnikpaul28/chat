@@ -202,18 +202,19 @@ router.post('/api/getChatListUserDetails', function(req, res, next) {
     chatList = chatList.split(',');
     let chatListLength = chatList.length;
     let userDataList = [];
+    let count = 0;
     for (let i = 0; i < chatList.length; i++) {
         Users.find({username: chatList[i]}).then(result => {
             if (result.length > 0) {
-                userDataList.push({
+                userDataList[i] = {
                     name: result[0].name,
                     userImage: result[0].userImage,
                     username: result[0].username
-                });
+                };
+                count++;
             }
-            if (chatListLength === userDataList.length) {
+            if (chatListLength === count) {
                 res.send(userDataList);
-                return;
             }
         });
     }
@@ -285,6 +286,10 @@ router.post('/api/fetchChat', function(req, res, next) {
             res.send(output);
         }
     });
+});
+
+router.post('/api/getSearchResults', function(req, res, next) {
+    Users.find({username: new RegExp('('+ req.body.usernameQuery + ')')}).then(result => res.send(result));
 });
 
 router.get('/api/test', function(req, res, next) {

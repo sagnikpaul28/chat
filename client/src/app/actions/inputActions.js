@@ -113,3 +113,10 @@ export function changeChatMessage(message) {
         payload: message
     }
 }
+
+export function changeContactSearch(value) {
+    return {
+        type: 'CONTACT_SEARCH_CHANGE',
+        payload: value
+    }
+}
