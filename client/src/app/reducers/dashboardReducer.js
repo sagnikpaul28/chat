@@ -31,7 +31,6 @@ const dashboardReducers = (state = {
             };
             break;
         case "SET_ONLINE_STATUS":
-            console.log("E");
             let usernameOnlineList = action.payload.list;
             let tempChatList = state.chatList;
             let tempExceptChatList = state.exceptChatList;

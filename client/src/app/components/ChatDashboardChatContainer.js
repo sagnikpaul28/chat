@@ -12,13 +12,19 @@ class ChatDashboardChatContainer extends React.Component {
     constructor(props) {
         super(props);
         let self = this;
-        self.socket = io('http://localhost:4000?username='+localStorage.getItem('username'));
-        self.socket.on('message', function(data) {
 
+        //Connect socket with current username
+        self.socket = io('http://localhost:4000?username='+localStorage.getItem('username'));
+
+        //When the socket receives an event for message received
+        self.socket.on('message', function(data) {
             let addToChatListUsername = "";
-            let chatList = self.props.userData.userData.chatList;
+            let chatList = self.props.dashboardData.chatList;
+            let exceptChatList = self.props.dashboardData.exceptChatList;
+            console.log(chatList, exceptChatList);
             let chatListUsernames = [];
 
+            //Check if the message has been sent by the username or has been sent to the user
             if ((data.sentBy === self.props.userData.userData.username && data.sentTo === self.props.chat.selectedUsername) || (data.sentTo === self.props.userData.userData.username && data.sentBy === self.props.chat.selectedUsername)) {
                 let newSelectedChatList = JSON.parse(self.props.chat.selectedChatList);
                 newSelectedChatList.push({
@@ -30,23 +36,28 @@ class ChatDashboardChatContainer extends React.Component {
                 self.props.saveChatMessage(newSelectedChatList);
             }
 
+            //Modify the chat list with the other's username
             if (data.sentBy === self.props.userData.userData.username) {
                 addToChatListUsername = data.sentTo
             }else if (data.sentTo === self.props.userData.userData.username) {
                 addToChatListUsername = data.sentBy;
             }
 
+            //If the message was sent or received by the user, modify the chat list
             if (addToChatListUsername) {
-                console.log(chatList);
-                for (let i = 0; i< chatList.length; i++) {
-                    if (chatList[i].username !== addToChatListUsername) {
-                        chatListUsernames.push(chatList[i].username);
+                //Extract all the users from chatlist to chatlistusernames
+                if (chatList) {
+                    for (let i = 0; i< chatList.length; i++) {
+                        if (chatList[i].username !== addToChatListUsername) {
+                            chatListUsernames.push(chatList[i].username);
+                        }
                     }
                 }
+                //modify chatlistusernames to move the latest username to the first
                 chatListUsernames.unshift(addToChatListUsername);
                 chatListUsernames = chatListUsernames.toString();
-                console.log(chatListUsernames);
 
+                //fetch the details of the new chatlist
                 fetch('http://localhost:4000/api/getChatListUserDetails', {
                     method: 'POST',
                     headers: {
@@ -58,10 +69,24 @@ class ChatDashboardChatContainer extends React.Component {
                 })
                     .then(res => res.json())
                     .then(res => {
-                        console.log(res);
+                        console.log(chatList, exceptChatList, res);
                         self.props.saveChatList(
                             res.map(item => {
-                                item.status = 'offline';
+                                //fetch online/offline status from current list
+                                if (chatList){
+                                    for (let i = 0; i < chatList.length; i++) {
+                                        if (chatList[i].username === item.username) {
+                                            item.status = chatList[i].status;
+                                        }
+                                    }
+                                }
+                                if (exceptChatList) {
+                                    for (let i = 0; i < exceptChatList.length; i++) {
+                                        if (exceptChatList[i].username === item.username) {
+                                            item.status = exceptChatList[i].status;
+                                        }
+                                    }
+                                }
                                 return item;
                             })
                         );
@@ -78,9 +103,24 @@ class ChatDashboardChatContainer extends React.Component {
                 })
                     .then(res => res.json())
                     .then(res => {
+                        console.log(chatList, exceptChatList, res);
                         self.props.saveExceptChatList(
                             res.map(item => {
-                                item.status = 'offline';
+                                //fetch online/offline status from current list
+                                if (chatList){
+                                    for (let i = 0; i < chatList.length; i++) {
+                                        if (chatList[i].username === item.username) {
+                                            item.status = chatList[i].status;
+                                        }
+                                    }
+                                }
+                                if (exceptChatList) {
+                                    for (let i = 0; i < exceptChatList.length; i++) {
+                                        if (exceptChatList[i].username === item.username) {
+                                            item.status = exceptChatList[i].status;
+                                        }
+                                    }
+                                }
                                 return item;
                             })
                         );

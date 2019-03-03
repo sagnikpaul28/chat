@@ -19,10 +19,6 @@ class ChatDashboard extends React.Component {
         this.chatList = null;
     }
 
-    componentDidMount() {
-
-    }
-
     fetchUserDetails(username) {
         fetch('http://localhost:4000/api/getUserDetails?username=' + username, {
             method: 'GET',

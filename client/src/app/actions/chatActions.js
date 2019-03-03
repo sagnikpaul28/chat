@@ -16,3 +16,10 @@ export function saveChatMessages(chat) {
         payload: chat
     }
 }
+
+export function setOnlineStatusOfSelectedUsername(status) {
+    return {
+        type: "CHANGE_ONLINE_STATUS_OF_CHAT_USER",
+        payload: status
+    }
+}

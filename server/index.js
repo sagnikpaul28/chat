@@ -44,17 +44,23 @@ let storedOnlineList = [];
 let io = socket(server);
 
 io.on('connection', function(socket) {
+    //check if the socket request contains the parameter of username
     if (socket.handshake.query.username) {
+        //check if the stored online list contains the username
         if (onlineListToSocketId[socket.handshake.query.username]) {
+            //if it contains the username, push the socket id to the array
             onlineListToSocketId[socket.handshake.query.username].push(socket.id);
         }else {
+            //if it doesn't contain the username, create an array
             onlineListToSocketId[socket.handshake.query.username] = [socket.id]
         }
     }
+    //online list will contain all the usernames connected to it
     let onlineList = [];
     for (let key in onlineListToSocketId) {
         onlineList.push(key);
     }
+    //if the online list changes, emit an event sending all the usernames
     if (JSON.stringify(storedOnlineList) !== JSON.stringify(onlineList)) {
         io.sockets.emit('online-status', {
             list: onlineList
@@ -79,6 +85,7 @@ io.on('connection', function(socket) {
                         chatList.unshift(data.sentTo);
                     }
                 }else {
+                    //chat list was empty
                     chatList = [data.sentTo];
                 }
                 Users.findOneAndUpdate({username: data.sentBy}, {chatList: chatList.toString()})

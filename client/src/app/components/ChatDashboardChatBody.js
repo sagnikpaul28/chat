@@ -5,7 +5,6 @@ import {saveChatList, saveExceptChatList} from "../actions/dashboardActions";
 
 class ChatDashboardChatBody extends React.Component {
     chatListHTML;
-    socket;
 
     constructor(props) {
         super(props);
@@ -13,6 +12,7 @@ class ChatDashboardChatBody extends React.Component {
     }
 
     componentWillUpdate(nextProps, nextState, nextContext) {
+        //when the chat messages content will update, re render chat messages
         if (nextProps.chat.selectedChatList !== this.props.chat.selectedChatList) {
             let chatList = JSON.parse(nextProps.chat.selectedChatList);
             this.chatListHTML = chatList.map(item => {

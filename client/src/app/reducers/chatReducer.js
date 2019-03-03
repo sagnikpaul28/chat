@@ -23,6 +23,11 @@ const chatReducers = (state = {
                 selectedChatList: action.payload
             };
             break;
+        case "CHANGE_ONLINE_STATUS_OF_CHAT_USER":
+            state = {
+                ...state,
+                selectedUserStatus: action.payload
+            }
     }
     return state;
 };

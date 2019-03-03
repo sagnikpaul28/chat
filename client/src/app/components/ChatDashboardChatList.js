@@ -7,7 +7,7 @@ import {
     saveExceptChatListHTML,
     setOnlineStatus
 } from "../actions/dashboardActions";
-import {onChatSelect, saveChatMessages} from "../actions/chatActions";
+import {onChatSelect, saveChatMessages, setOnlineStatusOfSelectedUsername} from "../actions/chatActions";
 import io from "socket.io-client";
 
 class ChatDashboardChatList extends React.Component {
@@ -18,10 +18,24 @@ class ChatDashboardChatList extends React.Component {
         super(props);
         this.socket = io('http://localhost:4000?username='+localStorage.getItem('username'));
         this.socket.on('online-status', data => {
+            //if chatlist and except chat list has been rendered, then set the online and offline status
             if (this.props.dashboardData.chatList || this.props.dashboardData.exceptChatList) {
                 this.props.setOnlineStatus(data);
             }else {
                 this.onlineList = data.list;
+            }
+
+            //Change online/offline status of chat opened
+            let flag = 0;
+            for (let i = 0; i < data.list.length; i++) {
+                if (data.list[i] === this.props.chat.selectedUsername) {
+                    this.props.setOnlineStatusOfSelectedUsername("online");
+                    flag = 1;
+                    break;
+                }
+            }
+            if (flag === 0) {
+                this.props.setOnlineStatusOfSelectedUsername("offline");
             }
         })
     }
@@ -63,7 +77,6 @@ class ChatDashboardChatList extends React.Component {
         }
 
         if (prevProps.dashboardData.updateList !== this.props.dashboardData.updateList) {
-            console.log(prevProps.dashboardData.updateList, this.props.dashboardData.updateList);
             this.renderChatListHTML();
             this.renderExceptChatListHTML();
         }
@@ -159,11 +172,21 @@ class ChatDashboardChatList extends React.Component {
             .then(res => res.json())
             .then(res => {
                 this.chatListHTML = res.map(item => {
-                    return <div className="item" data-name={item.name} key={item.username} id={item.username}
-                                onClick={this.onContactClick.bind(this)}><img className="item-image"
-                                                                              src={item.userImage}
-                                                                              alt={item.username}/><p
-                        className="item-name">{item.name}</p><span className={item.status + " status"}/></div>
+                    item.status = 'offline';
+                    if (this.onlineList) {
+                        for (let i = 0; i < this.onlineList.length; i++) {
+                            if (this.onlineList[i] === item.username) {
+                                item.status = 'online';
+                            }
+                        }
+                    }
+                    if (this.props.data.userData.username !== item.username) {
+                        return <div className="item" data-name={item.name} key={item.username} id={item.username}
+                                    onClick={this.onContactClick.bind(this)}><img className="item-image"
+                                                                                  src={item.userImage}
+                                                                                  alt={item.username}/><p
+                            className="item-name">{item.name}</p><span className={item.status + " status"}/></div>
+                    }
                 });
                 this.forceUpdate();
             });
@@ -235,6 +258,11 @@ const mapDispatchToProps = (dispatch) => {
         setOnlineStatus: (usernameList) => {
             dispatch(
                 setOnlineStatus(usernameList)
+            )
+        },
+        setOnlineStatusOfSelectedUsername: (status) => {
+            dispatch(
+                setOnlineStatusOfSelectedUsername(status)
             )
         }
     }
