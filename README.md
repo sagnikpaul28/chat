@@ -1,6 +1,8 @@
 # chat
 Chat App Using Node with Socket.io
 
+![Chat Page](https://res.cloudinary.com/dc-wiki/image/upload/v1596286752/chat-app.png)
+
 ### Installation
 ##### - Client - React
 1. cd client
